@@ -61,9 +61,13 @@ function App() {
       if (user) {
         user.getIdToken(true).then(() =>
           user.getIdTokenResult().then((idTokenResult) => {
-            setRole(
-              user.email.endsWith('.gov') ? 'Premium' : idTokenResult.claims.stripeRole ?? 'Basic',
-            );
+            if (user.email.endsWith('@deloitte.com')) {
+              setRole('Premium Plus');
+            } else if (user.email.endsWith('.gov')) {
+              setRole('Premium');
+            } else {
+              setRole(idTokenResult.claims.stripeRole ?? 'Basic');
+            }
           }),
         );
       } else {
