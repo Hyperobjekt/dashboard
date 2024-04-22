@@ -11,6 +11,7 @@ const non_reverse_metric_ids = [
   'sh_costburden_renters',
   'sh_overcrowding',
   'abk_withouthighdiploma',
+  'abk_highschoolbutnodiploa',
   'abk_lessthan9thgrade',
   'aic_nointernet',
   'eq_ozone',
