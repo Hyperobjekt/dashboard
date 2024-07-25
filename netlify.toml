@@ -2,3 +2,10 @@
   for = "/*"
   [headers.values]
     Access-Control-Allow-Origin = "*"
+
+[[redirects]]
+  from = "/usmap"
+  to = "/"
+  status = 200
+  force = true
+
