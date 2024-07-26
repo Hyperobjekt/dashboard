@@ -28,13 +28,15 @@ const Auth = ({ children }) => {
         if (member) {
           setMember(member);
         } else {
-          redirect();
+          // redirect();
         }
       })
       .catch(() => {
-        redirect();
+        // redirect();
       });
   }, [memberstack, setMember]);
+
+  if (!member) return 'loading memberstack user...';
 
   return children;
 };
