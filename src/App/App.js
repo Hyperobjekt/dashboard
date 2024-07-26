@@ -11,9 +11,7 @@ import { IndicatorPanel, CustomizeIndicatorPanel, useIndicatorPanelStore } from 
 import { SearchModal } from './Search';
 import { Scorecards } from './Scorecards';
 import theme from '../theme';
-import { auth } from '@hyperobjekt/spi-auth';
-import { useEffect, useState } from 'react';
-import useAppStore from './store';
+import Auth from './Auth';
 
 const CONFIG = {
   app: '/assets/config/app.json',
@@ -50,52 +48,25 @@ function App() {
   // tracks if the customize indicators panel is open
   const customizeOpen = useIndicatorPanelStore((state) => state.customizeOpen);
 
-  const [role, setRole] = useAppStore((state) => [state.role, state.setRole], shallow);
-
-  useEffect(() => {
-    if (process.env.REACT_APP_DISABLE_AUTH?.toLowerCase() === 'true') {
-      setRole('Premium Plus');
-      return;
-    }
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        user.getIdToken(true).then(() =>
-          user.getIdTokenResult().then((idTokenResult) => {
-            if (user.email.endsWith('@deloitte.com')) {
-              setRole('Premium Plus');
-            } else if (user.email.endsWith('.gov')) {
-              setRole('Premium');
-            } else {
-              setRole(idTokenResult.claims.stripeRole ?? 'Basic');
-            }
-          }),
-        );
-      } else {
-        window.location.href = 'https://www.socialprogress.org/us';
-      }
-    });
-    return () => unsubscribe();
-  }, []);
-
-  if (!role) return null;
-
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Dashboard config={CONFIG}>
-        <QueryParamRouter />
-        <AppWrapper className="App">
-          <Header />
-          <Map>
-            <IntroModal />
-            <IndicatorPanel open={indicatorsOpen} onClose={() => setIndicatorsOpen(false)} />
-            <CustomizeIndicatorPanel open={customizeOpen} />
-          </Map>
-          <Scorecards />
-        </AppWrapper>
-        <SearchModal />
-      </Dashboard>
-    </ThemeProvider>
+    <Auth>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Dashboard config={CONFIG}>
+          <QueryParamRouter />
+          <AppWrapper className="App">
+            <Header />
+            <Map>
+              <IntroModal />
+              <IndicatorPanel open={indicatorsOpen} onClose={() => setIndicatorsOpen(false)} />
+              <CustomizeIndicatorPanel open={customizeOpen} />
+            </Map>
+            <Scorecards />
+          </AppWrapper>
+          <SearchModal />
+        </Dashboard>
+      </ThemeProvider>
+    </Auth>
   );
 }
 

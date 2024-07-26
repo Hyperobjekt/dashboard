@@ -4,6 +4,7 @@ import { useMapState } from '@hyperobjekt/mapgl';
 import { Divider, MenuItem, Switch, Typography } from '@mui/material';
 import { InlineMenu } from '../components';
 import useAppStore from 'App/store';
+import shallow from 'zustand/shallow';
 
 /**
  * Renders an inline menu for selecting the region, with an
@@ -20,8 +21,10 @@ const RegionSelect = (props) => {
   const currentRegion = regions.find((r) => r.id === region);
   const map = useMapState('map');
   const selected = useLocationStore((state) => state.selected);
-  const role = useAppStore((state) => state.role);
-
+  const [canViewStates, canViewCities, canViewTracts] = useAppStore(
+    (state) => [state.canViewStates, state.canViewCities, state.canViewTracts],
+    shallow,
+  );
   // Stores the selected cities/states so toggling regions back and forth will keep previous state
   const [cachedSelection, setCachedSelection] = useState({ cities: [], states: [], tracts: [] });
 
@@ -45,11 +48,19 @@ const RegionSelect = (props) => {
     if (isSwitchClick) event.stopPropagation();
   };
 
-  const allowedRegions = {
-    'Premium Plus': regions,
-    Premium: regions.filter((x) => x.id !== 'tracts'),
-    Basic: regions.filter((x) => x.id === 'states'),
-  }[role];
+  // const allowedRegions = {
+  //   'Premium Plus': regions,
+  //   Premium: regions.filter((x) => x.id !== 'tracts'),
+  //   Basic: regions.filter((x) => x.id === 'states'),
+  // }[role];
+
+  const allowedRegions = regions.filter((region) => {
+    return (
+      (region.id === 'states' && !canViewStates) ||
+      (region.id === 'cities' && !canViewCities) ||
+      (region.id === 'tracts' && !canViewTracts)
+    );
+  });
 
   return (
     <InlineMenu

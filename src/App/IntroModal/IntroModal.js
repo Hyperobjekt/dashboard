@@ -20,7 +20,10 @@ const IntroModal = ({ ...props }) => {
     shallow,
   );
   const setRegion = useDashboardStore((state) => state.setRegion);
-  const role = useAppStore((state) => state.role);
+  const [canViewStates, canViewCities, canViewTracts] = useAppStore(
+    (state) => [state.canViewStates, state.canViewCities, state.canViewTracts],
+    shallow,
+  );
   const setAutoSwitchRegion = useDashboardStore((state) => state.setAutoSwitchRegion);
 
   const handleClose = (e) => {
@@ -110,38 +113,39 @@ const IntroModal = ({ ...props }) => {
           >
             <Label>View data for 50 U.S. states</Label>
             <Button
+              disabled={!canViewStates}
               fullWidth
               size="large"
               variant="contained"
               color="primary"
               onClick={handleViewStates}
             >
-              Go to states view
+              {canViewStates ? 'Go to states view' : 'Contact us for access'}
             </Button>
 
             <Label>View data for 500 U.S. cities</Label>
             <Button
-              disabled={role === 'Basic'}
+              disabled={!canViewCities}
               fullWidth
               size="large"
               variant="contained"
               color="primary"
               onClick={handleViewCities}
             >
-              {role !== 'Basic' ? 'Go to cities view' : 'Contact us for access'}
+              {canViewCities ? 'Go to cities view' : 'Contact us for access'}
             </Button>
 
             <>
               <Label>NEW: View data for Census tracts</Label>
               <Button
-                disabled={role !== 'Premium Plus'}
+                disabled={!canViewTracts}
                 fullWidth
                 size="large"
                 variant="contained"
                 color="primary"
                 onClick={handleViewTracts}
               >
-                {role === 'Premium Plus' ? 'Go to census tracts view' : 'Contact us for access'}
+                {canViewTracts ? 'Go to tracts view' : 'Contact us for access'}
               </Button>
             </>
           </Buttoncontainer>
