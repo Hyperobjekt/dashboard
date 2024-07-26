@@ -3,6 +3,7 @@ import { useConfig, useDashboardStore } from '@hyperobjekt/react-dashboard';
 import { usePreviousProps } from '@mui/utils';
 import useAppStore from 'App/store';
 import { useEffect } from 'react';
+import shallow from 'zustand/shallow';
 
 /**
  * Given an array of region configs, and a zoom level, returns an array of
@@ -54,8 +55,10 @@ const MapAutoSwitch = () => {
   const regionsConfig = useConfig('regions');
   const currentRegion = useDashboardStore((state) => state.region);
   const setRegion = useDashboardStore((state) => state.setRegion);
-  const role = useAppStore((state) => state.role);
-
+  const [canViewStates, canViewCities, canViewTracts] = useAppStore(
+    (state) => [state.canViewStates, state.canViewCities, state.canViewTracts],
+    shallow,
+  );
   // get zoom state of the map, and track previous to know zoom direction
   const viewState = useMapState('viewState');
   const previousViewState = usePreviousProps(viewState);
@@ -73,11 +76,14 @@ const MapAutoSwitch = () => {
   const nextRegion = getSwitchRegion(regionsInZoomRange, isZoomingIn);
   const nextRegionId = nextRegion?.id;
   useEffect(() => {
-    if (role !== 'Premium Plus' && nextRegionId === 'tracts') return;
-    if (!['Premium Plus', 'Premium'].includes(role) && nextRegionId === 'cities') return;
-
-    shouldSwitch && nextRegionId && setRegion(nextRegionId);
-  }, [nextRegionId, shouldSwitch, setRegion, role]);
+    if (
+      (nextRegionId === 'states' && canViewStates) ||
+      (nextRegionId === 'cities' && canViewCities) ||
+      (nextRegionId === 'tracts' && canViewTracts)
+    ) {
+      shouldSwitch && setRegion(nextRegionId);
+    }
+  }, [nextRegionId, shouldSwitch, setRegion, canViewStates, canViewCities, canViewTracts]);
 
   // render nothing!
   return null;

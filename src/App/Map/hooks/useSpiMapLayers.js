@@ -3,6 +3,7 @@ import useChoroplethLayerContext from './useChoroplethLayerContext';
 import useSpiScaleOverrides from '../../hooks/useSpiScaleOverrides';
 import { createCircleLayers, getChoroplethLayers } from '../utils';
 import useAppStore from 'App/store';
+import shallow from 'zustand/shallow';
 
 /**
  * Returns map layers for the current context for use with mapboxgl.
@@ -15,8 +16,10 @@ export default function useSpiMapLayers() {
   const scaleOverrides = useSpiScaleOverrides(currentContext);
   // pull if auto-switch is on or off
   const autoSwitchRegion = useDashboardStore((state) => state.autoSwitchRegion);
-  const role = useAppStore((state) => state.role);
-  // create layers contexts for all available regions
+  const [canViewStates, canViewCities, canViewTracts] = useAppStore(
+    (state) => [state.canViewStates, state.canViewCities, state.canViewTracts],
+    shallow,
+  ); // create layers contexts for all available regions
   // each region has its own scale extents
   const layerContexts = {
     states: useChoroplethLayerContext({
@@ -51,8 +54,14 @@ export default function useSpiMapLayers() {
   // if autoswitch is on, then return all layers
   const allLayers = Object.keys(layerContexts)
     .filter((region) => {
-      if (role === 'Basic') return region === 'states';
-      return role === 'Premium Plus' ? region : region !== 'tracts';
+      return (
+        (region === 'states' && canViewStates) ||
+        (region === 'cities' && canViewCities) ||
+        (region === 'tracts' && canViewTracts)
+      );
+
+      // if (role === 'Basic') return region === 'states';
+      // return role === 'Premium Plus' ? region : region !== 'tracts';
     })
     .map((region) => {
       return getChoroplethLayers(layerContexts[region]);

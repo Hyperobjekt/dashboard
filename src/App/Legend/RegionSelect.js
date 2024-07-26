@@ -54,11 +54,13 @@ const RegionSelect = (props) => {
   //   Basic: regions.filter((x) => x.id === 'states'),
   // }[role];
 
+  console.log({ canViewStates, canViewCities, canViewTracts });
+
   const allowedRegions = regions.filter((region) => {
     return (
-      (region.id === 'states' && !canViewStates) ||
-      (region.id === 'cities' && !canViewCities) ||
-      (region.id === 'tracts' && !canViewTracts)
+      (region.id === 'states' && canViewStates) ||
+      (region.id === 'cities' && canViewCities) ||
+      (region.id === 'tracts' && canViewTracts)
     );
   });
 
