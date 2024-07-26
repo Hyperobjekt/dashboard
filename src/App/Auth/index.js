@@ -5,6 +5,8 @@ import shallow from 'zustand/shallow';
 
 const config = {
   publicKey: process.env.REACT_APP_MEMBERSTACK_PUBLIC_KEY,
+  useCookies: true,
+  setCookieOnRootDomain: true,
 };
 
 // Redirects to Memberstack login
