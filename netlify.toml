@@ -4,7 +4,7 @@
     Access-Control-Allow-Origin = "*"
 
 [[redirects]]
-  from = "/usmap"
+  from = "/*"
   to = "/"
   status = 200
   force = true
