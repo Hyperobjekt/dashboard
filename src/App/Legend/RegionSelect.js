@@ -48,14 +48,6 @@ const RegionSelect = (props) => {
     if (isSwitchClick) event.stopPropagation();
   };
 
-  // const allowedRegions = {
-  //   'Premium Plus': regions,
-  //   Premium: regions.filter((x) => x.id !== 'tracts'),
-  //   Basic: regions.filter((x) => x.id === 'states'),
-  // }[role];
-
-  console.log({ canViewStates, canViewCities, canViewTracts });
-
   const allowedRegions = regions.filter((region) => {
     return (
       (region.id === 'states' && canViewStates) ||
