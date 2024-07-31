@@ -10,8 +10,7 @@ const config = {
 };
 
 // Redirects to Memberstack login
-const redirect = () =>
-  window.location.replace('https://social-progresss-stupendous-site.webflow.io/login');
+const redirect = () => window.location.replace('https://socialprogress.org/login');
 
 const Auth = ({ children }) => {
   const memberstack = useMemberstack();
