@@ -10,7 +10,7 @@ const config = {
 };
 
 // Redirects to Memberstack login
-const redirect = () => window.location.replace('https://socialprogress.org/login');
+const redirect = () => window.location.replace('https://www.socialprogress.org/login');
 
 const Auth = ({ children }) => {
   const memberstack = useMemberstack();
